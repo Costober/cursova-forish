@@ -223,7 +223,7 @@ def register():
         db.execute("INSERT INTO users (nickname, password_hash) VALUES (?, ?)",
                    username, password_hash)
 
-        return redirect("/")
+        return redirect("/login")
 
     return render_template("register.html")
 
@@ -294,22 +294,10 @@ def game(game_id):
 @login_required
 def add_to_cart(game_id):
     try:
-        existing_item = db.execute("""
-            SELECT quantity FROM cart_items
-            WHERE id_user = ? AND id_game = ?
+        db.execute("""
+            INSERT OR IGNORE INTO cart_items (id_user, id_game, quantity)
+            VALUES (?, ?, 1)
         """, session["user_id"], game_id)
-
-        if existing_item:
-            db.execute("""
-                UPDATE cart_items
-                SET quantity = quantity + 1
-                WHERE id_user = ? AND id_game = ?
-            """, session["user_id"], game_id)
-        else:
-            db.execute("""
-                INSERT INTO cart_items (id_user, id_game, quantity)
-                VALUES (?, ?, 1)
-            """, session["user_id"], game_id)
 
         flash("Game added to cart successfully!")
     except Exception as e:
@@ -328,11 +316,14 @@ def add_review(game_id):
         return redirect(f"/game/{game_id}")
 
     try:
+        # ВИПРАВЛЕНО: прибрано зайві дужки навколо аргументів
         db.execute("""
             INSERT INTO reviews (id_user, id_game, review_text, rating)
             VALUES (?, ?, ?, ?)
-        """, (session["user_id"], game_id, review_text, rating))
+        """, session["user_id"], game_id, review_text, rating)
+        
         flash("Review added successfully!")
     except Exception as e:
         flash(f"Error occurred while adding review: {e}")
+    
     return redirect(f"/game/{game_id}")

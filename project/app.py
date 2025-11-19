@@ -211,6 +211,9 @@ def register():
         if not username or not password or not password_repeat:
             return render_template("register.html", error="All fields are required.")
 
+        if len(password) < 8:  
+            return render_template("register.html", error="Password must be at least 8 characters long.")
+
         if password != password_repeat:
             return render_template("register.html", error="Passwords do not match.")
 

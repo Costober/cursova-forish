@@ -1,17 +1,22 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Hot games
+    Game Catalog
 {% endblock %}
 
 {% block main %}
-    <h1 class="text-center mb-4">Hot games</h1>
-    <div class="search-container">
-        <form method="GET" action="{{ url_for('index') }}" class="search-form">
-            <div class="search-controls">
-                <input type="text" name="search" placeholder="Search for a game..."
-                       value="{{ request.args.get('search', '') }}">
-                <select name="tag">
+    <h1 class="text-center mb-4">Game Catalog</h1>
+    
+    <div class="search-container mb-4">
+        <form method="GET" action="{{ url_for('index') }}" class="search-form row g-3 justify-content-center align-items-center">
+            
+            <div class="col-auto">
+                <input type="text" name="search" class="form-control" placeholder="Search for a game..."
+                       value="{{ search_query }}">
+            </div>
+
+            <div class="col-auto">
+                <select name="tag" class="form-select">
                     <option value="">All Tags</option>
                     {% for tag in tags %}
                         <option value="{{ tag.tag_name }}"
@@ -20,29 +25,69 @@
                         </option>
                     {% endfor %}
                 </select>
-                <button type="submit">Search</button>
+            </div>
+
+            <div class="col-auto">
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest Releases</option>
+                    <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="title_asc" {% if sort_by == 'title_asc' %}selected{% endif %}>Name: A-Z</option>
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filter</button>
             </div>
         </form>
     </div>
 
     <div class="games-container">
-        {% for game in game_info %}
-        <div class="product_item">
-            <a href="{{ url_for('game', game_id=game.id_game) }}">
-                {% if game.image_url and game.image_url != '' %}
-                    <img onerror="this.onerror=null; this.src='/static/images/default-game.jpg';"
-                         src="{{ game.image_url }}"
-                         alt="{{ game.title }}">
-                {% else %}
-                    <img src="/static/images/default-game.jpg"
-                         alt="{{ game.title }}">
-                {% endif %}
-            </a>
-            <div class="game-info">
-                <h3>{{ game.title }}</h3>
-                <p class="price">${{ "%.2f"|format(game.price) }}</p>
+        {% if game_info %}
+            {% for game in game_info %}
+            <div class="product_item">
+                <a href="{{ url_for('game', game_id=game.id_game) }}">
+                    {% if game.image_url and game.image_url != '' %}
+                        <img onerror="this.onerror=null; this.src='/static/images/default-game.jpg';"
+                             src="{{ game.image_url }}"
+                             alt="{{ game.title }}">
+                    {% else %}
+                        <img src="/static/images/default-game.jpg"
+                             alt="{{ game.title }}">
+                    {% endif %}
+                </a>
+                <div class="game-info">
+                    <h3>{{ game.title }}</h3>
+                    <p class="price">${{ "%.2f"|format(game.price) }}</p>
+                </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <p class="text-center w-100">No games found matching your criteria.</p>
+        {% endif %}
     </div>
+
+    {% if total_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            
+            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('index', page=page-1, search=search_query, tag=selected_tag, sort=sort_by) }}">Previous</a>
+            </li>
+
+            {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('index', page=p, search=search_query, tag=selected_tag, sort=sort_by) }}">
+                        {{ p }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('index', page=page+1, search=search_query, tag=selected_tag, sort=sort_by) }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+
 {% endblock %}

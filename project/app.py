@@ -4,6 +4,7 @@ from cs50 import SQL
 from flask import Flask, jsonify, flash, redirect, render_template, request, session, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+import math
 
 # Configure application
 app = Flask(__name__)
@@ -50,18 +51,18 @@ def apology(message, code=400):
 def index():
     search_query = request.args.get("search", "").strip()
     selected_tag = request.args.get("tag")
+    
+    sort_by = request.args.get("sort", "newest")  
+    page = request.args.get("page", 1, type=int)
+    per_page = 8  
+    offset = (page - 1) * per_page
 
-    # Базовий запит
-    query = """
-        SELECT DISTINCT g.*
-        FROM games g
-    """
+    base_query = "FROM games g"
     params = []
-
     where_clauses = []
 
     if selected_tag:
-        query += " JOIN game_tags gt ON g.id_game = gt.id_game JOIN tags t ON gt.id_tag = t.id_tag"
+        base_query += " JOIN game_tags gt ON g.id_game = gt.id_game JOIN tags t ON gt.id_tag = t.id_tag"
         where_clauses.append("t.tag_name = ?")
         params.append(selected_tag)
 
@@ -70,17 +71,42 @@ def index():
         params.append(f"%{search_query}%")
 
     if where_clauses:
-        query += " WHERE " + " AND ".join(where_clauses)
+        base_query += " WHERE " + " AND ".join(where_clauses)
 
-    # Передаємо параметри правильно, навіть якщо вони порожні
-    game_info = db.execute(query, *params)  # Розпаковуємо список `params`
+    count_query = f"SELECT COUNT(DISTINCT g.id_game) as count {base_query}"
+    total_games = db.execute(count_query, *params)[0]["count"]
+    total_pages = math.ceil(total_games / per_page)
 
-    # Отримуємо всі доступні теги
+    query = f"SELECT DISTINCT g.* {base_query}"
+
+    if sort_by == 'price_asc':
+        query += " ORDER BY g.price ASC"
+    elif sort_by == 'price_desc':
+        query += " ORDER BY g.price DESC"
+    elif sort_by == 'title_asc':
+        query += " ORDER BY g.title ASC"
+    else:  # default: newest
+        query += " ORDER BY g.release_date DESC"
+
+    query += " LIMIT ? OFFSET ?"
+    params.append(per_page)
+    params.append(offset)
+
+    game_info = db.execute(query, *params)
+
     tags = db.execute("SELECT tag_name FROM tags ORDER BY tag_name")
 
-    return render_template("index.html", game_info=game_info, tags=tags, selected_tag=selected_tag)
-
-
+    return render_template(
+        "index.html",
+        game_info=game_info,
+        tags=tags,
+        selected_tag=selected_tag,
+        search_query=search_query,
+        sort_by=sort_by,           
+        page=page,                 
+        total_pages=total_pages   
+    )
+    
 @app.route("/contacts")
 @login_required
 def contacts():

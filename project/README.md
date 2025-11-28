@@ -1,39 +1,50 @@
-# Forish - Game Shop Web Application
+# Forish — Вебзастосунок Магазину Ігор
 
-## Overview
-Forish is a modern web-based game shop platform built using Flask and SQLite. The application provides a comprehensive gaming marketplace where users can browse, purchase, and manage their digital game library. Through features like user authentication, game reviews, shopping cart functionality, and a robust tagging system, Forish delivers a complete e-commerce experience for gaming enthusiasts.
+## Огляд
 
-## Key Features
-Forish enables users to fully participate in a digital gaming marketplace. Users begin by registering an account, which gives them access to browse and purchase games from our curated collection. Each user gets their own personal library where they can access their purchased games and manage their collection. The platform includes a sophisticated review system where users can rate games and share their experiences with others. A streamlined shopping cart system makes purchasing multiple games simple and efficient. Users can also easily find games through our search system with tag filtering, and connect with our store through our contact page which includes our physical location and social media presence.
+Forish — це сучасна вебплатформа магазину ігор, створена з використанням Flask та SQLite. Застосунок надає повноцінний ігровий маркетплейс, де користувачі можуть переглядати, купувати та керувати своєю цифровою бібліотекою ігор. Завдяки таким функціям, як автентифікація користувача, відгуки на ігри, кошик для покупок та розгалужена система тегів, Forish забезпечує повноцінний e-commerce досвід для геймерів.
 
-## Technical Architecture
+## Основні можливості
 
-### Database Schema
-The application uses SQLite with a carefully designed schema to manage all aspects of the game shop. At its core, the users table stores account information, while the games table maintains our catalog of titles. These are connected through several relationship tables: user_games tracks ownership, reviews stores user feedback, and cart_items manages shopping sessions. The tagging system uses tags and game_tags tables to implement flexible game categorization.
+Forish дозволяє користувачам повністю взаємодіяти з цифровим ринком ігор. Користувачі починають із реєстрації облікового запису, що відкриває доступ до перегляду й покупки ігор із нашої вибраної колекції. Кожен користувач отримує особисту бібліотеку, де може переглядати придбані ігри та керувати ними. Платформа містить розвинену систему відгуків, де користувачі можуть оцінювати ігри та ділитися своїм досвідом. Зручна система кошика дозволяє просто і швидко купувати декілька ігор. Користувачі також можуть легко знаходити ігри через пошук із фільтрацією за тегами, а сторінка контактів дає можливість зв’язатися з магазином, зокрема переглянути фізичну адресу та соціальні мережі.
 
-### Core Files and Functionality
+## Технічна архітектура
+
+### Схема бази даних
+
+Застосунок використовує SQLite із продуманою схемою для керування всіма аспектами роботи магазину. Основною є таблиця users, яка зберігає інформацію про облікові записи, тоді як таблиця games містить каталог ігор. Ці таблиці пов’язуються через декілька проміжних таблиць: user_games відстежує володіння іграми, reviews зберігає відгуки користувачів, а cart_items керує кошиком під час покупок. Система тегів реалізована через таблиці tags та game_tags, що забезпечує гнучку категоризацію ігор.
+
+### Основні файли та функціональність
 
 #### `app.py`
-The main application file serves as the backbone of Forish, handling everything from initial setup to request processing. It configures the Flask application, establishes database connections, and manages user sessions. The file implements route handlers for all major functionality, incorporating security middleware through the login_required decorator. Error handling is comprehensive, ensuring users receive clear feedback when issues arise.
 
-#### Templates
-The application's interface is built through a series of thoughtfully designed templates. The layout.html file serves as the foundation, providing consistent navigation and styling across the platform. Game.html delivers detailed views of individual titles, adapting its display based on whether users own the game or have it in their cart. The index.html template creates an engaging shop interface, while library.html gives users quick access to their owned games. Cart.html manages the purchasing process, and contacts.html helps users connect with our physical store.
+Головний файл застосунку слугує основою Forish, обробляючи все — від початкової конфігурації до обробки запитів. Він налаштовує Flask-застосунок, встановлює з’єднання з базою даних і керує сесіями користувачів. У файлі реалізовано маршрути для всього основного функціоналу, а також забезпечено безпеку через декоратор login_required. Обробка помилок комплексна, тому користувачі отримують зрозумілі повідомлення у разі виникнення проблем.
 
-### Security Measures
-Security is a top priority in Forish's implementation. Passwords are protected using Werkzeug's security functions for hashing. The application uses session-based authentication to maintain user states securely. All database queries are parameterized to prevent SQL injection attacks. Template escaping protects against XSS vulnerabilities, while CSRF protection safeguards all forms.
+#### Шаблони
 
-### Design Decisions
-The choice of SQLite as our database system prioritizes simplicity and portability while maintaining robust data integrity through foreign key constraints. The user interface leverages Bootstrap for responsive design, enhanced with custom CSS to create a gaming-focused aesthetic. Code organization emphasizes modularity and reusability, with clear separation between routes, templates, and helper functions.
+Інтерфейс застосунку створений за допомогою низки продуманих шаблонів. Файл layout.html є фундаментом, забезпечуючи узгоджену навігацію та стилі по всій платформі. Game.html надає детальний перегляд окремої гри, адаптуючи відображення залежно від того, чи володіє користувач грою або чи знаходиться вона в кошику. Шаблон index.html формує привабливий магазинний інтерфейс, а library.html дає користувачу швидкий доступ до власних ігор. Cart.html керує процесом покупки, а contacts.html дозволяє зв’язатися з фізичним магазином.
 
-The application's features are implemented with user experience in mind. Cart updates happen asynchronously to prevent page reloads, all forms include server-side validation, and the search system offers flexible filtering options. The tagging system is designed to scale with our growing game catalog.
+### Заходи безпеки
 
-## Future Improvements
-Looking ahead, we plan to enhance Forish with several major features. Payment processing integration will streamline purchases, while user profiles will enable personalized experiences. A recommendation system will help users discover new games, and an administrative interface will simplify content management. We're also exploring integration with external game APIs and implementing performance optimizations for larger catalogs.
+Безпека є ключовим пріоритетом у реалізації Forish. Паролі захищено за допомогою функцій хешування з Werkzeug. Застосунок використовує автентифікацію на основі сесій для безпечного збереження стану користувача. Усі SQL-запити параметризовані для запобігання атакам SQL-інʼєкцій. Екранування шаблонів захищає від XSS-уразливостей, а CSRF-захист забезпечує безпечну роботу форм.
 
-## Setup and Installation
-Getting Forish running is straightforward. After cloning the repository, install the required dependencies using pip install -r requirements.txt. Initialize the database with flask init-db, set your environment variables for development or production, and launch the application with flask run.
+### Дизайнерські рішення
 
-## Technologies Used
-Forish is built on a robust stack of modern web technologies. The Flask web framework provides our application structure, while SQLite handles data persistence. Bootstrap 5.3 enables responsive design, with Jinja2 handling template rendering. Dynamic features are implemented in JavaScript, and the Google Maps API powers our store location feature.
+Вибір SQLite як системи бази даних підкреслює простоту та портативність, водночас забезпечуючи цілісність даних через зовнішні ключі. Інтерфейс побудований на Bootstrap для адаптивного дизайну та доповнений кастомним CSS для створення естетики, орієнтованої на геймерів. Організація коду зосереджена на модульності та повторному використанні, з чітким поділом між маршрутами, шаблонами та допоміжними функціями.
 
-This project represents a comprehensive implementation of web development principles, showcasing thoughtful database design and user experience considerations in creating a modern e-commerce platform for digital games.
+Функціональність застосунку реалізована з урахуванням досвіду користувача: кошик оновлюється без перезавантаження сторінки, усі форми мають серверну валідацію, а система пошуку підтримує гнучку фільтрацію. Система тегів спроєктована так, щоб масштабуватись разом зі зростанням каталогу ігор.
+
+## Майбутні покращення
+
+У перспективі планується розширити Forish кількома важливими функціями. Інтеграція системи оплати зробить покупки ще зручнішими, персональні профілі користувачів забезпечать індивідуальний досвід, а система рекомендацій допоможе відкривати нові ігри. Адміністративна панель спростить керування контентом. Також розглядається інтеграція з зовнішніми API ігор та оптимізація продуктивності для великих каталогів.
+
+## Встановлення та запуск
+
+Запустити Forish досить просто. Після клонування репозиторію встановіть необхідні залежності через `pip install -r requirements.txt`. Ініціалізуйте базу даних командою `flask init-db`, налаштуйте змінні середовища для режиму розробки або продакшену та запустіть застосунок командою `flask run`.
+
+## Використані технології
+
+Forish побудовано на сучасному стеку вебтехнологій. Flask забезпечує структуру застосунку, а SQLite відповідає за зберігання даних. Bootstrap 5.3 забезпечує адаптивність інтерфейсу, Jinja2 — шаблонізацію. Динамічні можливості реалізовано на JavaScript, а Google Maps API використовується для відображення розташування магазину.
+
+Цей проєкт є комплексною реалізацією принципів веброзробки, демонструючи продуманий дизайн бази даних і фокус на досвіді користувача при створенні сучасної e-commerce платформи для цифрових ігор.
+

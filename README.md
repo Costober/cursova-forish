@@ -1,44 +1,30 @@
-# Game Store "Forish"
+# Магазин ігор "Forish"
 
-#### Video Demo: [<URL HERE>](https://youtu.be/0jfWoOzDLcI)
+#### Відеодемонстрація: [Переглянути відео](https://youtu.be/RXLx2mxWyys)
 
-## Description:
+## Опис:
 
-Game Store is a web application that allows users to browse, search, and purchase video games. The platform provides functionalities such as user authentication, game categorization by tags, user reviews, a shopping cart, and a personal game library.
+Game Store — це вебзастосунок, який дозволяє користувачам переглядати, шукати та купувати відеоігри. Платформа надає функціонал користувацької автентифікації, категоризації ігор за тегами, відгуків користувачів, кошика та особистої бібліотеки ігор.
 
-#### Features
+#### Функції
 
-User Authentication: Users can register, log in, and securely store their credentials.
+* **Автентифікація користувачів:** можливість реєструватися, входити в систему та безпечно зберігати облікові дані.
+* **Перегляд ігор:** пошук ігор за назвою та фільтрація за тегами.
+* **Деталі гри:** кожна гра має окрему сторінку з описом, інформацією про розробника, датою релізу та зображенням.
+* **Бібліотека ігор:** персональна бібліотека користувача з усіма придбаними іграми.
+* **Система кошика:** можливість додавати ігри до кошика.
+* **Система відгуків:** користувачі можуть залишати відгуки та оцінювати ігри за шкалою від 1 до 10.
+* **Фільтрація за тегами:** можливість відбирати ігри відповідно до пов’язаних тегів.
 
-- Game Browsing: Users can search for games by title and filter by tags.
+#### Схема бази даних
 
-- Game Details: Each game has a dedicated page with a description, developer information, release date, and an image.
+Застосунок складається з таких таблиць:
 
-- Game Library: Users have a personal library where they can access all purchased games.
+* **users** — зберігає облікові записи користувачів.
+* **games** — містить інформацію про ігри.
+* **tags** — зберігає доступні теги ігор.
+* **game_tags** — таблиця зв’язку «багато-до-багатьох» між іграми та тегами.
+* **cart_items** — зберігає інформацію про кошики користувачів.
+* **reviews** — містить надіслані користувачами відгуки та оцінки.
 
-- Cart System: Users can add games to their shopping cart.
-
-- Review System: Users can leave reviews and rate games from 1 to 10.
-
-- Tag Filtering: Users can filter games based on associated tags.
-
-#### Database Schema
-
-The application consists of the following tables:
-
-- users - Stores user accounts.
-
-- games - Stores game details.
-
-- tags - Stores available game tags.
-
-- game_tags - Many-to-many relationship between games and tags.
-
-- cart_items - Stores user cart information.
-
-- reviews - Stores user-submitted reviews and ratings.
-
-
-
-
-
+Якщо хочеш, можу також перекласти у markdown інший текст або відформатувати красиво — скажи!

@@ -11,7 +11,7 @@
         <form method="GET" action="{{ url_for('index') }}" class="search-form row g-3 justify-content-center align-items-center">
             
             <div class="col-auto">
-                <input type="text" name="search" class="form-control" placeholder="Search for a game..."
+                <input type="text" name="search" id="search-input" class="form-control" placeholder="Search for a game..."
                        value="{{ search_query }}">
             </div>
 
@@ -42,29 +42,8 @@
         </form>
     </div>
 
-    <div class="games-container">
-        {% if game_info %}
-            {% for game in game_info %}
-            <div class="product_item">
-                <a href="{{ url_for('game', game_id=game.id_game) }}">
-                    {% if game.image_url and game.image_url != '' %}
-                        <img onerror="this.onerror=null; this.src='/static/images/default-game.jpg';"
-                             src="{{ game.image_url }}"
-                             alt="{{ game.title }}">
-                    {% else %}
-                        <img src="/static/images/default-game.jpg"
-                             alt="{{ game.title }}">
-                    {% endif %}
-                </a>
-                <div class="game-info">
-                    <h3>{{ game.title }}</h3>
-                    <p class="price">${{ "%.2f"|format(game.price) }}</p>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-center w-100">No games found matching your criteria.</p>
-        {% endif %}
+    <div class="games-container" id="games-container">
+        {% include '_games_grid.html' %}
     </div>
 
     {% if total_pages > 1 %}
@@ -89,5 +68,31 @@
         </ul>
     </nav>
     {% endif %}
+
+    <script>
+        let timeout = null;
+        const searchInput = document.getElementById('search-input');
+        const gamesContainer = document.getElementById('games-container');
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timeout);
+
+            // Затримка 300мс перед відправкою запиту
+            timeout = setTimeout(() => {
+                const query = searchInput.value;
+                
+                fetch(`/?search=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    gamesContainer.innerHTML = html;
+                })
+                .catch(err => console.error('Error:', err));
+            }, 300);
+        });
+    </script>
 
 {% endblock %}

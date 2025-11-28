@@ -85,7 +85,8 @@ def index():
         base_query += " WHERE " + " AND ".join(where_clauses)
 
     count_query = f"SELECT COUNT(DISTINCT g.id_game) as count {base_query}"
-    total_games = db.execute(count_query, *params)[0]["count"]
+    total_games_result = db.execute(count_query, *params)
+    total_games = total_games_result[0]["count"] if total_games_result else 0
     total_pages = math.ceil(total_games / per_page)
 
     query = f"SELECT DISTINCT g.* {base_query}"
@@ -106,6 +107,9 @@ def index():
     game_info = db.execute(query, *params)
 
     tags = db.execute("SELECT tag_name FROM tags ORDER BY tag_name")
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render_template("_games_grid.html", game_info=game_info)
 
     return render_template(
         "index.html",

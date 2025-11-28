@@ -108,8 +108,7 @@ def index():
 
     tags = db.execute("SELECT tag_name FROM tags ORDER BY tag_name")
 
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return render_template("_games_grid.html", game_info=game_info)
+    if request.headers.get('HX-Request') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':        return render_template("_games_grid.html", game_info=game_info)
 
     return render_template(
         "index.html",

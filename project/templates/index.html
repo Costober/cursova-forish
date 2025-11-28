@@ -11,8 +11,15 @@
         <form method="GET" action="{{ url_for('index') }}" class="search-form row g-3 justify-content-center align-items-center">
             
             <div class="col-auto">
-                <input type="text" name="search" id="search-input" class="form-control" placeholder="Search for a game..."
-                       value="{{ search_query }}">
+                <input type="text" 
+                    name="search" 
+                    class="form-control" 
+                    placeholder="Search for a game..."
+                    value="{{ search_query }}"
+                    hx-get="/" 
+                    hx-trigger="keyup changed delay:500ms" 
+                    hx-target="#games-container" 
+                    hx-swap="innerHTML">
             </div>
 
             <div class="col-auto">

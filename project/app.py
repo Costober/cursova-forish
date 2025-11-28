@@ -41,6 +41,17 @@ def login_required(f):
 
     return decorated_function
 
+def admin_required(f):
+    """
+    Decorate routes to require admin access.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("is_admin") != 1:
+            return apology("Access denied. Admins only.", 403)
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 def apology(message, code=400):
     """Renders error message"""
@@ -178,6 +189,7 @@ def login():
             return apology("invalid username and/or password", 403)
 
         session["user_id"] = rows[0]["id_user"]
+        session["is_admin"] = rows[0]["is_admin"]
         return redirect("/")
 
     return render_template("login.html")
@@ -356,3 +368,71 @@ def add_review(game_id):
         flash(f"Error occurred while adding review: {e}")
     
     return redirect(f"/game/{game_id}")
+
+@app.route("/admin")
+@login_required
+@admin_required
+def admin_dashboard():
+    # Отримуємо всі ігри для відображення в таблиці
+    games = db.execute("SELECT * FROM games ORDER BY id_game DESC")
+    return render_template("admin/dashboard.html", games=games)
+
+@app.route("/admin/add", methods=["GET", "POST"])
+@login_required
+@admin_required
+def admin_add_game():
+    if request.method == "POST":
+        title = request.form.get("title")
+        price = request.form.get("price")
+        description = request.form.get("description")
+        developer = request.form.get("developer")
+        release_date = request.form.get("release_date")
+        image_url = request.form.get("image_url")
+
+        if not title or not price or not developer:
+             return apology("Title, price and developer are required")
+
+        db.execute("""
+            INSERT INTO games (title, price, description, developer, release_date, image_url)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, title, price, description, developer, release_date, image_url)
+        
+        flash("Game added successfully!")
+        return redirect("/admin")
+    
+    return render_template("admin/game_form.html", action="Add")
+
+@app.route("/admin/edit/<int:game_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def admin_edit_game(game_id):
+    if request.method == "POST":
+        title = request.form.get("title")
+        price = request.form.get("price")
+        description = request.form.get("description")
+        developer = request.form.get("developer")
+        release_date = request.form.get("release_date")
+        image_url = request.form.get("image_url")
+
+        db.execute("""
+            UPDATE games 
+            SET title=?, price=?, description=?, developer=?, release_date=?, image_url=?
+            WHERE id_game = ?
+        """, title, price, description, developer, release_date, image_url, game_id)
+        
+        flash("Game updated successfully!")
+        return redirect("/admin")
+
+    game = db.execute("SELECT * FROM games WHERE id_game = ?", game_id)
+    if not game:
+        return apology("Game not found", 404)
+        
+    return render_template("admin/game_form.html", action="Edit", game=game[0])
+
+@app.route("/admin/delete/<int:game_id>", methods=["POST"])
+@login_required
+@admin_required
+def admin_delete_game(game_id):
+    db.execute("DELETE FROM games WHERE id_game = ?", game_id)
+    flash("Game deleted!")
+    return redirect("/admin")

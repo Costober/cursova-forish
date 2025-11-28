@@ -32,6 +32,11 @@
                     <ul class="navbar-nav me-auto mt-2 mt-lg-0">
                         <li class="nav-item"><a class="nav-link" href="/">Shop</a></li>
                         <li class="nav-item"><a class="nav-link" href="/library">Library</a></li>
+                        {% if session["is_admin"] == 1 %}
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-bold" href="/admin">Admin Panel</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item"><a class="nav-link" href="/contacts">Contacts</a></li>
                         <li class="nav-item"><a class="nav-link" href="/cart">Cart</a></li>
                     </ul>
